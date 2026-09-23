@@ -1,0 +1,10 @@
+# raw data dumps - never commit (size + license restrictions)
+data/
+*.xml
+*.7z
+*.csv
+
+# python
+__pycache__/
+*.pyc
+.env
