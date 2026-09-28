@@ -17,6 +17,7 @@ lawd im learning through AI
 
 import argparse
 import os
+import re
 import sys
 from getpass import getpass
 from pathlib import Path
@@ -38,12 +39,12 @@ def connection_settings():
     }
 
 
-def copy_targets(table_key):
-    """[(sql table, csv filename, [sql column names])] for one contract entry."""
+def copy_targets(table_key, schema):
+    """[(qualified sql table, csv filename, [sql column names])] for one contract entry."""
     spec = dump_schema.TABLES[table_key]
 
     targets = [(
-        spec["table"],
+        f"{schema}.{spec["table"]}",
         f"{spec['table']}.csv",
         [dump_schema.sql_name(table_key, c) for c in spec["columns"]],
     )]
@@ -52,7 +53,7 @@ def copy_targets(table_key):
     if offload:
         cols = [offload["key"]] + offload["columns"]
         targets.append((
-            offload["table"],
+            f"{schema}.{offload['table']}",
             f"{offload['table']}.csv",
             [dump_schema.sql_name(table_key, c) for c in cols],
         ))
@@ -70,9 +71,9 @@ def copy_sql(table, columns):
     )
 
 
-def load(cursor, csv_dir, table_key):
+def load(cursor, csv_dir, table_key, schema):
     loaded = []
-    for table, csv_name, columns in copy_targets(table_key):
+    for table, csv_name, columns in copy_targets(table_key, schema):
         path = csv_dir / csv_name
         if not path.is_file():
             raise SystemExit(f"missing CSV: {path}\nRun parse_dump.py first.")
@@ -107,9 +108,13 @@ def main(argv=None):
         ap.error(f"not in the contract: {', '.join(missing)}. "
                  f"Known: {', '.join(dump_schema.TABLES)}")
 
+    schema = args.site.lower()
+    if not re.fullmatch(r"[a-z][a-z0-9_]*", schema):
+        ap.error(f"invalid schema name: {schema!r}")
+
     if args.print_sql:
         for key in keys:
-            for table, _, columns in copy_targets(key):
+            for table, _, columns in copy_targets(key, schema):
                 print(copy_sql(table, columns) + ";\n")
         return 0
 
@@ -119,9 +124,10 @@ def main(argv=None):
     try:
         with conn:                          # commits on success, rolls back on error
             with conn.cursor() as cursor:
+                cursor.execute(f"SET search_path TO {schema}")
                 for key in keys:
-                    for table, count in load(cursor, csv_dir, key):
-                        print(f"{table:24} {count:>9,}")
+                    for table, count in load(cursor, csv_dir, key, schema):
+                        print(f"{table:32} {count:>9,}")
     finally:
         conn.close()
 

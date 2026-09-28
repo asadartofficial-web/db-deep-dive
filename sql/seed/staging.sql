@@ -11,6 +11,9 @@
 --Ai is used for learning purposes. The data is from Stack Exchange and is used for research and analysis.
 -- PostHistory is deliberately absent -- see dump_schema.py.
 
+CREATE SCHEMA IF NOT EXISTS :"schema";
+SET search_path TO :"schema";
+
 DROP TABLE IF EXISTS staging_posts;
 DROP TABLE IF EXISTS staging_posts_text;
 DROP TABLE IF EXISTS staging_users;
