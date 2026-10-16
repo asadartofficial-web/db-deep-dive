@@ -1,0 +1,20 @@
+CREATE INDEX IF NOT EXISTS posts_parent_idx            ON core.posts       (parent_key);
+CREATE INDEX IF NOT EXISTS posts_accepted_answer_idx   ON core.posts       (accepted_answer_key);
+CREATE INDEX IF NOT EXISTS posts_owner_user_idx        ON core.posts       (owner_user_key);
+CREATE INDEX IF NOT EXISTS posts_last_editor_user_idx  ON core.posts       (last_editor_user_key);
+CREATE INDEX IF NOT EXISTS comments_post_idx           ON core.comments    (post_key);
+CREATE INDEX IF NOT EXISTS comments_user_idx           ON core.comments    (user_key);
+CREATE INDEX IF NOT EXISTS votes_post_idx              ON core.votes       (post_key);
+CREATE INDEX IF NOT EXISTS badges_user_idx             ON core.badges      (user_key);
+CREATE INDEX IF NOT EXISTS tags_excerpt_post_idx       ON core.tags        (excerpt_post_key);
+CREATE INDEX IF NOT EXISTS tags_wiki_post_idx          ON core.tags        (wiki_post_key);
+CREATE INDEX IF NOT EXISTS post_links_post_idx         ON core.post_links  (post_key);
+CREATE INDEX IF NOT EXISTS post_links_related_post_idx ON core.post_links  (related_post_key);
+
+ANALYZE core.posts;
+ANALYZE core.users;
+ANALYZE core.comments;
+ANALYZE core.votes;
+ANALYZE core.badges;
+ANALYZE core.tags;
+ANALYZE core.post_links;
