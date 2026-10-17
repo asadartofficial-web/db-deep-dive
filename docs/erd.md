@@ -7,14 +7,15 @@ referencing column.
 ## How to read it
 
 Crow's foot notation. The marker nearest an entity says how many of **that**
-entity take part.
+entity take part. Each marker is two characters: the outer one is the maximum,
+the inner one is the minimum.
 
 | marker | means |
 |---|---|
-| `||` | exactly one |
-| `|o` | zero or one |
+| `\|\|` | exactly one |
+| `\|o` | zero or one |
 | `o{` | zero or more |
-| `|{` | one or more |
+| `\|{` | one or more |
 
 A **solid line** is an identifying relationship: the child cannot exist without
 the parent, because the parent's key is part of the child's own primary key.
