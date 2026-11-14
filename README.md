@@ -102,8 +102,9 @@ in the [transform runbook](docs/transform-runbook.md).
   top of it and do not exist yet.
 - **No incremental load.** Every script rebuilds. A second dump of the same site
   would need a full reload, not a merge.
-- **Only foreign-key columns are indexed.** Performance indexing should follow
-  real queries, and I have not written enough of those yet.
+- **One deliberate index beyond the foreign keys.** `posts_questions_site_time`
+  (partial, covering, questions only) — measured before/after in
+  [indexing report](docs/indexing-report.md). More should follow real queries.
 - **120 tag-uses remain unexplained.** Small, and documented rather than hidden.
 - **The security and benchmarking work in the original plan is not started.**
 

@@ -1,0 +1,18 @@
+GroupAggregate  (cost=6334.40..24095.33 rows=151395 width=47) (actual time=1.871..138.632 rows=72.00 loops=1)
+  Group Key: site, (EXTRACT(hour FROM created_at))
+  Buffers: shared hit=1512, temp read=271 written=272
+  ->  Incremental Sort  (cost=6334.40..21002.71 rows=160024 width=39) (actual time=1.855..110.015 rows=159100.00 loops=1)
+        Sort Key: site, (EXTRACT(hour FROM created_at))
+        Presorted Key: site
+        Full-sort Groups: 3  Sort Method: quicksort  Average Memory: 27kB  Peak Memory: 27kB
+        Pre-sorted Groups: 3  Sort Methods: quicksort, external merge  Average Memory: 1134kB  Peak Memory: 3309kB  Average Disk: 722kB  Peak Disk: 2168kB
+        Buffers: shared hit=1512, temp read=271 written=272
+        ->  Index Only Scan using posts_questions_site_time on posts  (cost=0.42..6438.09 rows=160024 width=39) (actual time=0.122..39.023 rows=159100.00 loops=1)
+              Heap Fetches: 2363
+              Index Searches: 1
+              Buffers: shared hit=1506
+Planning:
+  Buffers: shared hit=235
+Planning Time: 5.343 ms
+Execution Time: 146.313 ms
+Time: 153.366 ms

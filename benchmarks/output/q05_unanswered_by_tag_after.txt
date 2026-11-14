@@ -1,0 +1,46 @@
+Limit  (cost=29030.81..29030.86 rows=20 width=70) (actual time=245.151..247.375 rows=20.00 loops=1)
+  Buffers: shared hit=15143 read=4528 written=8
+  ->  Sort  (cost=29030.81..29036.99 rows=2472 width=70) (actual time=245.148..247.370 rows=20.00 loops=1)
+        Sort Key: (round((((count(*) FILTER (WHERE (p.answer_count = 0)))::numeric * 100.0) / (count(*))::numeric), 1)) DESC, (count(*)) DESC
+        Sort Method: top-N heapsort  Memory: 27kB
+        Buffers: shared hit=15143 read=4528 written=8
+        ->  Finalize HashAggregate  (cost=28841.42..28965.03 rows=2472 width=70) (actual time=244.163..247.243 rows=235.00 loops=1)
+              Group Key: t.site, t.tag_name
+              Filter: (count(*) >= 200)
+              Batches: 1  Memory Usage: 1049kB
+              Rows Removed by Filter: 7249
+              Buffers: shared hit=15137 read=4528 written=8
+              ->  Gather  (cost=27380.26..28715.33 rows=12609 width=38) (actual time=236.093..241.534 rows=11611.00 loops=1)
+                    Workers Planned: 1
+                    Workers Launched: 1
+                    Buffers: shared hit=15137 read=4528 written=8
+                    ->  Partial HashAggregate  (cost=26380.26..26454.43 rows=7417 width=38) (actual time=214.654..215.882 rows=5805.50 loops=2)
+                          Group Key: t.site, t.tag_name
+                          Batches: 1  Memory Usage: 793kB
+                          Buffers: shared hit=15137 read=4528 written=8
+                          Worker 0:  Batches: 1  Memory Usage: 793kB
+                          ->  Hash Join  (cost=21788.20..25731.02 rows=51939 width=26) (actual time=84.879..170.600 rows=148281.00 loops=2)
+                                Hash Cond: (pt.tag_key = t.tag_key)
+                                Buffers: shared hit=15137 read=4528 written=8
+                                ->  Parallel Hash Join  (cost=21545.81..25352.21 rows=51939 width=12) (actual time=81.841..135.325 rows=148281.00 loops=2)
+                                      Hash Cond: (pt.post_key = p.post_key)
+                                      Buffers: shared hit=14989 read=4528 written=8
+                                      ->  Parallel Seq Scan on post_tags pt  (cost=0.00..3348.48 rows=174448 width=16) (actual time=0.016..8.213 rows=148281.00 loops=2)
+                                            Buffers: shared hit=1604
+                                      ->  Parallel Hash  (cost=20712.34..20712.34 rows=66677 width=12) (actual time=81.287..81.288 rows=79550.00 loops=2)
+                                            Buckets: 262144  Batches: 1  Memory Usage: 9536kB
+                                            Buffers: shared hit=13385 read=4528 written=8
+                                            ->  Parallel Seq Scan on posts p  (cost=0.00..20712.34 rows=66677 width=12) (actual time=0.017..62.705 rows=79550.00 loops=2)
+                                                  Filter: (post_type_id = 1)
+                                                  Rows Removed by Filter: 189187
+                                                  Buffers: shared hit=13385 read=4528 written=8
+                                ->  Hash  (cost=148.84..148.84 rows=7484 width=30) (actual time=2.990..2.992 rows=7484.00 loops=2)
+                                      Buckets: 8192  Batches: 1  Memory Usage: 548kB
+                                      Buffers: shared hit=148
+                                      ->  Seq Scan on tags t  (cost=0.00..148.84 rows=7484 width=30) (actual time=0.760..1.734 rows=7484.00 loops=2)
+                                            Buffers: shared hit=148
+Planning:
+  Buffers: shared hit=422
+Planning Time: 15.243 ms
+Execution Time: 248.042 ms
+Time: 265.570 ms

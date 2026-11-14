@@ -1,0 +1,36 @@
+GroupAggregate  (cost=58733.62..60769.66 rows=200 width=79) (actual time=403.695..590.442 rows=3.00 loops=1)
+  Group Key: first_answer.site
+  Buffers: shared hit=26572 read=9265 written=2, temp read=948 written=1301
+  ->  Sort  (cost=58733.62..58918.26 rows=73856 width=23) (actual time=401.860..426.054 rows=144164.00 loops=1)
+        Sort Key: first_answer.site
+        Sort Method: external merge  Disk: 4808kB
+        Buffers: shared hit=26564 read=9265 written=2, temp read=948 written=1301
+        ->  Subquery Scan on first_answer  (cost=51284.35..52761.47 rows=73856 width=23) (actual time=298.780..370.581 rows=144164.00 loops=1)
+              Buffers: shared hit=26561 read=9265 written=2, temp read=347 written=698
+              ->  HashAggregate  (cost=51284.35..52022.91 rows=73856 width=31) (actual time=298.779..359.783 rows=144164.00 loops=1)
+                    Group Key: q.post_key
+                    Batches: 5  Memory Usage: 9785kB  Disk Usage: 3568kB
+                    Buffers: shared hit=26561 read=9265 written=2, temp read=347 written=698
+                    ->  Gather  (cost=22545.81..50915.07 rows=73856 width=31) (actual time=136.621..197.959 rows=248340.00 loops=1)
+                          Workers Planned: 2
+                          Workers Launched: 2
+                          Buffers: shared hit=26561 read=9265 written=2
+                          ->  Parallel Hash Join  (cost=21545.81..42529.47 rows=30773 width=31) (actual time=74.310..166.382 rows=82780.00 loops=3)
+                                Hash Cond: (a.parent_key = q.post_key)
+                                Buffers: shared hit=26561 read=9265 written=2
+                                ->  Parallel Seq Scan on posts a  (cost=0.00..20712.34 rows=103359 width=16) (actual time=0.018..45.173 rows=82780.00 loops=3)
+                                      Filter: (post_type_id = 2)
+                                      Rows Removed by Filter: 96378
+                                      Buffers: shared hit=13258 read=4655 written=2
+                                ->  Parallel Hash  (cost=20712.34..20712.34 rows=66677 width=23) (actual time=73.928..73.929 rows=53033.33 loops=3)
+                                      Buckets: 262144  Batches: 1  Memory Usage: 10784kB
+                                      Buffers: shared hit=13303 read=4610
+                                      ->  Parallel Seq Scan on posts q  (cost=0.00..20712.34 rows=66677 width=23) (actual time=0.041..84.904 rows=79550.00 loops=2)
+                                            Filter: (post_type_id = 1)
+                                            Rows Removed by Filter: 189187
+                                            Buffers: shared hit=13303 read=4610
+Planning:
+  Buffers: shared hit=268
+Planning Time: 9.252 ms
+Execution Time: 608.855 ms
+Time: 621.289 ms

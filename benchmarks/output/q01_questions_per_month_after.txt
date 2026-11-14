@@ -1,0 +1,18 @@
+GroupAggregate  (cost=6334.40..24095.33 rows=151395 width=23) (actual time=1.660..104.498 rows=443.00 loops=1)
+  Group Key: site, (date_trunc('month'::text, created_at))
+  Buffers: shared hit=726 read=786 written=472, temp read=322 written=323
+  ->  Incremental Sort  (cost=6334.40..21002.71 rows=160024 width=15) (actual time=1.637..86.424 rows=159100.00 loops=1)
+        Sort Key: site, (date_trunc('month'::text, created_at))
+        Presorted Key: site
+        Full-sort Groups: 3  Sort Method: quicksort  Average Memory: 27kB  Peak Memory: 27kB
+        Pre-sorted Groups: 3  Sort Methods: quicksort, external merge  Average Memory: 1134kB  Peak Memory: 3309kB  Average Disk: 858kB  Peak Disk: 2576kB
+        Buffers: shared hit=726 read=786 written=472, temp read=322 written=323
+        ->  Index Only Scan using posts_questions_site_time on posts  (cost=0.42..6438.09 rows=160024 width=15) (actual time=0.162..45.296 rows=159100.00 loops=1)
+              Heap Fetches: 2363
+              Index Searches: 1
+              Buffers: shared hit=720 read=786 written=472
+Planning:
+  Buffers: shared hit=223 read=1
+Planning Time: 6.279 ms
+Execution Time: 114.197 ms
+Time: 122.334 ms

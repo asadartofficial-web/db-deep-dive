@@ -1,10 +1,10 @@
---- q01: New Questions per month, Per Site ---
+--- q01: New questions per month, per site ---
 
-Select site,
-       MIN(created_at) as first_post,
+SELECT site,
+       date_trunc('month', created_at) AS month,
        COUNT(*) AS questions
 FROM core.posts
 WHERE post_type_id = 1
-GROUP BY site, MIN(created_at)
-ORDER BY site, first_post
+GROUP BY site, date_trunc('month', created_at)
+ORDER BY site, month
 ;

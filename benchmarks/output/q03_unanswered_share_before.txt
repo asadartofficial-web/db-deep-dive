@@ -1,0 +1,16 @@
+GroupAggregate  (cost=43788.40..49984.54 rows=151831 width=87) (actual time=186.909..260.099 rows=41.00 loops=1)
+  Group Key: site, (EXTRACT(year FROM created_at))
+  Buffers: shared hit=2842 read=15077, temp read=535 written=537
+  ->  Sort  (cost=43788.40..44188.46 rows=160024 width=43) (actual time=186.512..226.931 rows=159100.00 loops=1)
+        Sort Key: site, (EXTRACT(year FROM created_at))
+        Sort Method: external merge  Disk: 4280kB
+        Buffers: shared hit=2842 read=15077, temp read=535 written=537
+        ->  Seq Scan on posts  (cost=0.00..25031.49 rows=160024 width=43) (actual time=0.043..99.996 rows=159100.00 loops=1)
+              Filter: (post_type_id = 1)
+              Rows Removed by Filter: 378374
+              Buffers: shared hit=2836 read=15077
+Planning:
+  Buffers: shared hit=198
+Planning Time: 6.803 ms
+Execution Time: 267.705 ms
+Time: 276.380 ms

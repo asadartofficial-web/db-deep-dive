@@ -1,0 +1,16 @@
+GroupAggregate  (cost=41600.90..45099.03 rows=151831 width=23) (actual time=269.229..332.996 rows=443.00 loops=1)
+  Group Key: site, (date_trunc('month'::text, created_at))
+  Buffers: shared hit=2653 read=15266, temp read=507 written=509
+  ->  Sort  (cost=41600.90..42000.96 rows=160024 width=15) (actual time=269.079..307.531 rows=159100.00 loops=1)
+        Sort Key: site, (date_trunc('month'::text, created_at))
+        Sort Method: external merge  Disk: 4056kB
+        Buffers: shared hit=2653 read=15266, temp read=507 written=509
+        ->  Seq Scan on posts  (cost=0.00..25031.49 rows=160024 width=15) (actual time=0.073..139.870 rows=159100.00 loops=1)
+              Filter: (post_type_id = 1)
+              Rows Removed by Filter: 378374
+              Buffers: shared hit=2647 read=15266
+Planning:
+  Buffers: shared hit=199
+Planning Time: 6.853 ms
+Execution Time: 344.140 ms
+Time: 353.685 ms
